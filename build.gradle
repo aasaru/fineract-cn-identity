@@ -41,9 +41,9 @@ task publishToMavenLocal {
 
 task artifactoryPublish {
     group 'all'
+    dependsOn publishToMavenLocal
     dependsOn gradle.includedBuild('api').task(':artifactoryPublish')
-    dependsOn gradle.includedBuild('library').task(':artifactoryPublish')
-    dependsOn gradle.includedBuild('test').task(':artifactoryPublish')
+    dependsOn gradle.includedBuild('service').task(':artifactoryPublish')
 }
 
 task licenseFormat {

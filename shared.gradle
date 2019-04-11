@@ -92,7 +92,7 @@ artifactory {
         }
 
         defaults {
-            publications ('putProjectNameHerePublication')
+            publications ('api', 'service', 'bootService')
         }
     }
 }
