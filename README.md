@@ -1,3 +1,8 @@
+TODO switch to apache!
+
+[![Build Status](https://api.travis-ci.com/aasaru/fineract-cn-identity.svg?branch=travis)](https://travis-ci.com/aasaru/fineract-cn-identity)
+
+
 # Apache Fineract CN Identity Manager
 
 This project provides identity management for Apache Fineract CN services.

@@ -81,6 +81,22 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+artifactory {
+    contextUrl = System.getenv("ARTIFACTORY_URL")
+    publish {
+        repository {
+            repoKey = project.findProperty('artifactoryRepoKey')
+            username = System.getenv("ARTIFACTORY_USER")
+            password = System.getenv("ARTIFACTORY_PASSWORD")
+        }
+
+        defaults {
+            publications ('putProjectNameHerePublication')
+        }
+    }
+}
+artifactoryPublish.dependsOn('clean','publishToMavenLocal')
+
 license {
     header rootProject.file('../HEADER')
     strictCheck true
