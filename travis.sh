@@ -24,10 +24,16 @@
 set -e
 EXIT_STATUS=0
 
+REPOSITORY_NAME="$( $TRAVIS_REPO_SLUG | cut -d "/" -f 2 )"
+
 # Builds and Publishes a SNAPSHOT
 function build_snapshot() {
   echo -e "Building and publishing a snapshot out of branch [$TRAVIS_BRANCH]"
-  ./gradlew -PartifactoryRepoKey=libs-snapshot-local -DbuildInfo.build.number=${TRAVIS_COMMIT::7} artifactoryPublish --stacktrace || EXIT_STATUS=$?
+  ./gradlew publishToMavenLocal || EXIT_STATUS=$?
+
+  docker build -t ${TRAVIS_REPO_SLUG}:latest .
+  echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  docker push ${TRAVIS_REPO_SLUG}:latest
 }
 
 # Builds a Pull Request
@@ -47,12 +53,15 @@ function build_tag() {
   echo -e "Building tag [$TRAVIS_TAG] and publishing it as a release"
   ./gradlew -PartifactoryRepoKey=libs-release-local -PexternalVersion=$TRAVIS_TAG artifactoryPublish --stacktrace || EXIT_STATUS=$?
 
+ # TODO publish as tag to Docker Hub
+
 }
 
 echo -e "TRAVIS_BRANCH=$TRAVIS_BRANCH"
 echo -e "TRAVIS_TAG=$TRAVIS_TAG"
 echo -e "TRAVIS_COMMIT=${TRAVIS_COMMIT::7}"
 echo -e "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
+echo -e "TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG"
 
 # Build Logic
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then

@@ -24,7 +24,7 @@ ENV server.max-http-header-size=16384 \
     cassandra.clusterName="Test Cluster" \
     server.port=$identity_port
 
+COPY service/build/libs/service-0.1.0-BUILD-SNAPSHOT-boot.jar /tmp/identity-service-boot-0.1.0-BUILD-SNAPSHOT.jar
 WORKDIR /tmp
-RUN wget -O identity-service-boot-0.1.0-BUILD-SNAPSHOT.jar https://mifos.jfrog.io/mifos/libs-snapshot/org/apache/fineract/cn/identity/service-boot/0.1.0-BUILD-SNAPSHOT/service-boot-0.1.0-BUILD-SNAPSHOT.jar
 
 CMD ["java", "-jar", "identity-service-boot-0.1.0-BUILD-SNAPSHOT.jar"]
