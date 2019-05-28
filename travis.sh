@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -30,7 +30,7 @@ function build_snapshot() {
   ./gradlew publishToMavenLocal || EXIT_STATUS=$?
 
   docker build -t ${TRAVIS_REPO_SLUG}:latest .
-  docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
   docker push ${TRAVIS_REPO_SLUG}:latest
 }
 
