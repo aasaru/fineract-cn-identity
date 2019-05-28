@@ -29,10 +29,14 @@ function build_snapshot() {
   echo -e "Building and publishing a snapshot out of branch [$TRAVIS_BRANCH]"
   ./gradlew publishToMavenLocal || EXIT_STATUS=$?
 
-  docker build -t ${TRAVIS_REPO_SLUG}:latest .
-  echo -e "Trying to log in with #$DOCKER_USER"
+  echo -e "Building as ${TRAVIS_COMMIT::7}"
+  docker build -t ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT::7} .
+  echo -e "Tagging Docker build as latest"
+  docker tag ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT::7} ${TRAVIS_REPO_SLUG}:latest
+  echo -e "Trying to log in to Docker Hub with #$DOCKER_USER"
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-  echo -e "Trying to push to ${TRAVIS_REPO_SLUG}"
+  echo -e "Trying to push to Docker Hub ${TRAVIS_REPO_SLUG}"
+  docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT::7}
   docker push ${TRAVIS_REPO_SLUG}:latest
 }
 
