@@ -32,7 +32,7 @@ function build_snapshot() {
   ./gradlew publishToMavenLocal || EXIT_STATUS=$?
 
   docker build -t ${TRAVIS_REPO_SLUG}:latest .
-  echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+  echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USER" --password-stdin
   docker push ${TRAVIS_REPO_SLUG}:latest
 }
 
@@ -62,6 +62,7 @@ echo -e "TRAVIS_TAG=$TRAVIS_TAG"
 echo -e "TRAVIS_COMMIT=${TRAVIS_COMMIT::7}"
 echo -e "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
 echo -e "TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG"
+echo -e "DOCKERHUB_USER=$DOCKERHUB_USER"
 
 # Build Logic
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
