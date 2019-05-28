@@ -21,6 +21,8 @@ sudo: false
 jdk:
 - openjdk8
 install: true
+before_script:
+  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
 script: "./travis.sh"
 services:
   - 'docker'
