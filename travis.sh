@@ -30,8 +30,8 @@ function build_snapshot() {
   ./gradlew publishToMavenLocal || EXIT_STATUS=$?
 
   docker build -t ${TRAVIS_REPO_SLUG}:latest .
-  echo -e "Trying to log in with #$DOCKER_USER and password starting with: ${DOCKER_PASSWORD:0:2}"
-  docker login --username "$DOCKER_USER" --password "$DOCKER_PASSWORD"
+  echo -e "Trying to log in with #$DOCKER_USER"
+  docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   echo -e "Trying to push to ${TRAVIS_REPO_SLUG}"
   docker push ${TRAVIS_REPO_SLUG}:latest
 }
