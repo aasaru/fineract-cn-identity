@@ -24,15 +24,13 @@
 set -e
 EXIT_STATUS=0
 
-REPOSITORY_NAME="$( $TRAVIS_REPO_SLUG | cut -d "/" -f 2 )"
-
 # Builds and Publishes a SNAPSHOT
 function build_snapshot() {
   echo -e "Building and publishing a snapshot out of branch [$TRAVIS_BRANCH]"
   ./gradlew publishToMavenLocal || EXIT_STATUS=$?
 
   docker build -t ${TRAVIS_REPO_SLUG}:latest .
-  echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USER" --password-stdin
+  echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
   docker push ${TRAVIS_REPO_SLUG}:latest
 }
 
@@ -62,7 +60,7 @@ echo -e "TRAVIS_TAG=$TRAVIS_TAG"
 echo -e "TRAVIS_COMMIT=${TRAVIS_COMMIT::7}"
 echo -e "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
 echo -e "TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG"
-echo -e "DOCKERHUB_USER=$DOCKERHUB_USER"
+echo -e "DOCKER_USER=$DOCKER_USER"
 
 # Build Logic
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
