@@ -56,7 +56,7 @@ function uploadToDockerHub() {
   tagName=$2
 
   echo -e "Building Docker image and tag with '${tagName}' and 'latest'"
-  docker build -t ${targetDockerRepository}:${tagName} -t ${targetDockerRepository}:latest.
+  docker build -t ${targetDockerRepository}:${tagName} -t ${targetDockerRepository}:latest .
   echo -e "Logging in to Docker Hub as $DOCKER_USER"
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   echo -e "Push to Docker Hub $targetDockerRepository"
