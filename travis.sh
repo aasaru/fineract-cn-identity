@@ -60,7 +60,7 @@ function uploadToDockerHub() {
   docker build -t ${targetDockerRepository}:${tagName} .
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   echo -e "Pushing image to Docker Hub $targetDockerRepository"
-  docker push ${targetDockerRepository}:${tagName}
+  docker push ${targetDockerRepository}
   return 0
 }
 
