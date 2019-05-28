@@ -27,9 +27,8 @@ EXIT_STATUS=0
 # Builds and Publishes a SNAPSHOT
 function build_snapshot() {
   echo -e "Building and publishing a snapshot out of branch [$TRAVIS_BRANCH]"
-  ./gradlew publishToMavenLocal || EXIT_STATUS=$?
-
-  uploadToDockerHub $TRAVIS_REPO_SLUG ${TRAVIS_COMMIT::7}
+  ./gradlew -PartifactoryRepoKey=testing-snapshot-local -DbuildInfo.build.number=${TRAVIS_COMMIT::7} artifactoryPublish --stacktrace || EXIT_STATUS=$?
+  uploadToDockerHub $TRAVIS_REPO_SLUG latest
 }
 
 # Builds a Pull Request
@@ -47,7 +46,7 @@ function build_otherbranch() {
 # Builds and Publishes a Tag
 function build_tag() {
   echo -e "Building tag [$TRAVIS_TAG] and publishing it as a release in Artifactory and Docker Hub."
-  ./gradlew -PartifactoryRepoKey=libs-release-local -PexternalVersion=$TRAVIS_TAG artifactoryPublish --stacktrace || EXIT_STATUS=$?
+  ./gradlew -PartifactoryRepoKey=testing-release-local -PexternalVersion=$TRAVIS_TAG artifactoryPublish --stacktrace || EXIT_STATUS=$?
   uploadToDockerHub $TRAVIS_REPO_SLUG $TRAVIS_TAG
 }
 
@@ -55,11 +54,10 @@ function uploadToDockerHub() {
   targetDockerRepository=$1
   tagName=$2
 
-  echo -e "Building Docker image and tag with '${tagName}' and 'latest'"
-  docker build -t ${targetDockerRepository}:${tagName} -t ${targetDockerRepository}:latest .
-  echo -e "Logging in to Docker Hub as $DOCKER_USER"
+  echo -e "Building Docker image and tagging with '${tagName}'"
+  docker build -t ${targetDockerRepository}:${tagName} -t .
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-  echo -e "Push to Docker Hub $targetDockerRepository"
+  echo -e "Pushing image to Docker Hub $targetDockerRepository"
   docker push ${targetDockerRepository}:${tagName}
 }
 
