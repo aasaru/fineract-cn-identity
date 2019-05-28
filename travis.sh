@@ -29,36 +29,38 @@ function build_snapshot() {
   echo -e "Building and publishing a snapshot out of branch [$TRAVIS_BRANCH]"
   ./gradlew publishToMavenLocal || EXIT_STATUS=$?
 
-  echo -e "Building as ${TRAVIS_COMMIT::7}"
-  docker build -t ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT::7} .
-  echo -e "Tagging Docker build as latest"
-  docker tag ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT::7} ${TRAVIS_REPO_SLUG}:latest
-  echo -e "Trying to log in to Docker Hub with #$DOCKER_USER"
-  docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-  echo -e "Trying to push to Docker Hub ${TRAVIS_REPO_SLUG}"
-  docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT::7}
-  docker push ${TRAVIS_REPO_SLUG}:latest
+  uploadToDockerHub $TRAVIS_REPO_SLUG ${TRAVIS_COMMIT::7}
 }
 
 # Builds a Pull Request
 function build_pullrequest() {
-  echo -e "Building pull request #$TRAVIS_PULL_REQUEST of branch [$TRAVIS_BRANCH]. Won't publish anything to Artifactory."
+  echo -e "Building pull request #$TRAVIS_PULL_REQUEST of branch [$TRAVIS_BRANCH]. Won't publish anything to Artifactory and Docker Hub."
   ./gradlew publishToMavenLocal rat || EXIT_STATUS=$?
 }
 
 # For other branches we need to add branch name as prefix
 function build_otherbranch() {
-  echo -e "Building a snapshot out of branch [$TRAVIS_BRANCH] and publishing it with prefix '${TRAVIS_BRANCH}-SNAPSHOT'"
+  echo -e "Building a snapshot out of branch [$TRAVIS_BRANCH] and publishing it with prefix '${TRAVIS_BRANCH}-SNAPSHOT'. Won't publish to Docker Hub."
   ./gradlew -PartifactoryRepoKey=libs-snapshot-local -DbuildInfo.build.number=${TRAVIS_COMMIT::7} -PexternalVersion=${TRAVIS_BRANCH}-SNAPSHOT artifactoryPublish --stacktrace || EXIT_STATUS=$?
 }
 
 # Builds and Publishes a Tag
 function build_tag() {
-  echo -e "Building tag [$TRAVIS_TAG] and publishing it as a release"
+  echo -e "Building tag [$TRAVIS_TAG] and publishing it as a release in Artifactory and Docker Hub."
   ./gradlew -PartifactoryRepoKey=libs-release-local -PexternalVersion=$TRAVIS_TAG artifactoryPublish --stacktrace || EXIT_STATUS=$?
+  uploadToDockerHub $TRAVIS_REPO_SLUG $TRAVIS_TAG
+}
 
- # TODO publish as tag to Docker Hub
+function uploadToDockerHub() {
+  targetDockerRepository=$1
+  tagName=$2
 
+  echo -e "Building Docker image and tag with '${tagName}' and 'latest'"
+  docker build -t ${targetDockerRepository}:${tagName} -t ${targetDockerRepository}:latest.
+  echo -e "Logging in to Docker Hub as $DOCKER_USER"
+  docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+  echo -e "Push to Docker Hub $targetDockerRepository"
+  docker push ${targetDockerRepository}:${tagName}
 }
 
 echo -e "TRAVIS_BRANCH=$TRAVIS_BRANCH"
