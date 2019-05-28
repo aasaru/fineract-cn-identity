@@ -50,6 +50,7 @@ function build_tag() {
   uploadToDockerHub $TRAVIS_REPO_SLUG $TRAVIS_TAG
 }
 
+# Builds and uploads an image to hub.docker.com
 function uploadToDockerHub() {
   targetDockerRepository=$1
   tagName=$2
@@ -58,7 +59,8 @@ function uploadToDockerHub() {
   docker build -t ${targetDockerRepository}:${tagName} .
   docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
   echo -e "Pushing image to Docker Hub $targetDockerRepository"
-  docker push ${targetDockerRepository}:${tagName}
+  docker push ${targetDockerRepository}:${tagName} || EXIT_STATUS=$?
+  return 0
 }
 
 echo -e "TRAVIS_BRANCH=$TRAVIS_BRANCH"
