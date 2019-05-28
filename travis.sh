@@ -28,7 +28,7 @@ EXIT_STATUS=0
 function build_snapshot() {
   echo -e "Building and publishing a snapshot out of branch [$TRAVIS_BRANCH]"
   ./gradlew -PartifactoryRepoKey=testing-snapshot-local -DbuildInfo.build.number=${TRAVIS_COMMIT::7} artifactoryPublish --stacktrace || EXIT_STATUS=$?
-  uploadToDockerHub $TRAVIS_REPO_SLUG latest
+  uploadToDockerHub $TRAVIS_REPO_SLUG latest || EXIT_STATUS=$?
 }
 
 # Builds a Pull Request
@@ -47,7 +47,8 @@ function build_otherbranch() {
 function build_tag() {
   echo -e "Building tag [$TRAVIS_TAG] and publishing it as a release in Artifactory and Docker Hub."
   ./gradlew -PartifactoryRepoKey=testing-release-local -PexternalVersion=$TRAVIS_TAG artifactoryPublish --stacktrace || EXIT_STATUS=$?
-  uploadToDockerHub $TRAVIS_REPO_SLUG $TRAVIS_TAG
+  uploadToDockerHub $TRAVIS_REPO_SLUG $TRAVIS_TAG || EXIT_STATUS=$?
+  echo -e "Done uploading"
 }
 
 # Builds and uploads an image to hub.docker.com
