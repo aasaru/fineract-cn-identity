@@ -16,7 +16,7 @@
  */
 
 group 'org.apache.fineract.cn.identity'
-version '0.1.0-BUILD-SNAPSHOT'
+version '0.0.x-SNAPSHOT'
 
 ext.versions = [
         frameworkcrypto    : '0.1.0-BUILD-SNAPSHOT',
