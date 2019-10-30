@@ -20,10 +20,10 @@ version '0.1.0-BUILD-SNAPSHOT'
 
 ext.versions = [
         frameworkcrypto    : '0.1.0-BUILD-SNAPSHOT',
-        frameworkanubis    : '0.1.0-BUILD-SNAPSHOT',
+        frameworkanubis    : '0.0.x-SNAPSHOT',
         frameworkapi       : '0.1.0-BUILD-SNAPSHOT',
         frameworktest      : '0.1.0-BUILD-SNAPSHOT',
-        frameworklang      : '0.1.0-BUILD-SNAPSHOT',
+        frameworklang      : '0.0.x-SNAPSHOT',
         frameworkasync     : '0.1.0-BUILD-SNAPSHOT',
         frameworkcassandra : '0.1.0-BUILD-SNAPSHOT',
         frameworkcommand   : '0.1.0-BUILD-SNAPSHOT',
