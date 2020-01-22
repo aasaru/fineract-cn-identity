@@ -18,6 +18,8 @@
  */
 package org.apache.fineract.cn.identity.rest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.fineract.cn.identity.api.v1.PermittableGroupIds;
 import org.apache.fineract.cn.identity.api.v1.client.IdentityManager;
 import org.apache.fineract.cn.identity.api.v1.domain.Authentication;
@@ -56,7 +58,6 @@ import java.util.concurrent.ExecutionException;
 @SuppressWarnings("unused")
 @RestController //
 public class AuthorizationRestController {
-
   private final CommandGateway commandGateway;
   private final Logger logger;
 
@@ -118,6 +119,7 @@ public class AuthorizationRestController {
         }
         catch (final AmitAuthenticationException e)
         {
+          logger.warn("LOGGER: Authentication error", e);
           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
